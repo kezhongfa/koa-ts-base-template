@@ -5,3 +5,4 @@ dist/*
 bin/
 sh/
 docs/
+ecosystem.config.js

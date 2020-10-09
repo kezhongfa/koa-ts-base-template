@@ -1,12 +1,12 @@
 {
-  "name": "koa2-ts-cli",
+  "name": "koa-ts-base-template",
   "version": "0.0.0",
-  "description": "koa2-ts-cli",
+  "description": "koa base template",
   "author": "kezhongfa",
   "keywords": [
     "koa",
     "ts",
-    "koa-cli"
+    "koa-template"
   ],
   "main": "index.js",
   "engines": {
