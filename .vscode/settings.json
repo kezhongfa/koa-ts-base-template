@@ -1,0 +1,21 @@
+{
+  "debug.toolBarLocation": "docked",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.fontSize": 14,
+  "workbench.colorTheme": "Visual Studio Dark",
+  "editor.formatOnSave": true,
+  "editor.fontSize": 14,
+  "files.encoding": "utf8",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.sourcemaps": true,
+    "**/.DS_Store": true,
+    "**/.next": true,
+    "**/.vscode": false,
+    "**/.idea": true,
+    "**/.history": true
+  }
+}

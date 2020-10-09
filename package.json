@@ -1,0 +1,78 @@
+{
+  "name": "koa2-ts-cli",
+  "version": "0.0.0",
+  "description": "koa2-ts-cli",
+  "author": "kezhongfa",
+  "keywords": [
+    "koa",
+    "ts",
+    "koa-cli"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": "^10.0.0 || ^12.0.0"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "check-nodeJs-version": "node ./bin/checkNodeJsVersion.js",
+    "checkDependencies": "node ./bin/checkDependencies.js",
+    "before-run-check": "npm run check-nodeJs-version && npm run checkDependencies",
+    "precodecheck": "tsc --noEmit",
+    "codecheck": "npx eslint -c .eslintrc.json \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "start": "npm run before-run-check && node ./bin/start.js",
+    "build:ts": "npm run clean && tsc -p tsconfig.build.json",
+    "build": "npm run codecheck && npm run build:ts",
+    "pro": "npx pm2 start ecosystem.config.js --env production"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo '执行代码检测:' && lint-staged",
+      "commit-msg": "echo '执行git提交信息格式检测:' && commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "npm run codecheck",
+      "git add ."
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kezhongfa/koa2-ts-cli.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kezhongfa/koa2-ts-cli/issues"
+  },
+  "homepage": "https://github.com/kezhongfa/koa2-ts-cli#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@types/koa": "^2.11.4",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-router": "^7.4.1",
+    "@types/node": "^14.11.7",
+    "colors": "^1.4.0",
+    "commitlint-config-fa": "^1.0.5",
+    "compare-versions": "^3.6.0",
+    "cross-env": "^7.0.2",
+    "eslint-config-kzf": "0.0.14",
+    "fe-team-utils": "^1.0.14",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "minimist": "^1.2.5",
+    "nodemon": "^2.0.4",
+    "pm2": "^4.5.0",
+    "prettier": "^2.1.2",
+    "prompts": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "shelljs": "^0.8.4",
+    "ts-node": "^9.0.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^9.4.0"
+  }
+}

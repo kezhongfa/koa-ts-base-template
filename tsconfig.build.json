@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": false,
+    "removeComments": false
+  },
+  "exclude": ["src/**/*.test.tsx"]
+}
