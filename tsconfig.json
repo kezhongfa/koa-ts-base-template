@@ -18,8 +18,12 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "koa-parameter": ["src/@types"]
     }
   },
   "include": ["src"]
+  // "ts-node": {
+  //   "transpileOnly": true
+  // }
 }

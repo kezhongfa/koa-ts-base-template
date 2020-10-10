@@ -38,19 +38,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kezhongfa/koa2-ts-cli.git"
+    "url": "git+https://github.com/kezhongfa/koa-ts-base-template.git"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kezhongfa/koa2-ts-cli/issues"
+    "url": "https://github.com/kezhongfa/koa-ts-base-template/issues"
   },
-  "homepage": "https://github.com/kezhongfa/koa2-ts-cli#readme",
+  "homepage": "https://github.com/kezhongfa/koa-ts-base-template#readme",
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@types/koa": "^2.11.4",
-    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-favicon": "^2.0.19",
+    "@types/koa-json-error": "^3.1.2",
     "@types/koa-router": "^7.4.1",
+    "@types/koa-static": "^4.0.1",
     "@types/node": "^14.11.7",
+    "@types/require-directory": "^2.1.1",
     "colors": "^1.4.0",
     "commitlint-config-fa": "^1.0.5",
     "compare-versions": "^3.6.0",
@@ -72,7 +75,12 @@
   },
   "dependencies": {
     "koa": "^2.13.0",
-    "koa-bodyparser": "^4.3.0",
-    "koa-router": "^9.4.0"
+    "koa-body": "^4.2.0",
+    "koa-favicon": "^2.1.0",
+    "koa-json-error": "^3.1.2",
+    "koa-parameter": "^3.0.1",
+    "koa-router": "^9.4.0",
+    "koa-static": "^5.0.0",
+    "require-directory": "^2.1.1"
   }
 }
