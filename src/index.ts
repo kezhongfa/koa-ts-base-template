@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable comma-dangle */
@@ -10,24 +11,53 @@ import requireDirectory from 'require-directory';
 import favicon from 'koa-favicon';
 import Router from 'koa-router';
 import parameter from 'koa-parameter';
+import mongoose from 'mongoose';
 import path from 'path';
+import config from '@/config';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// 获取mongoose链接地址
+const { mongoURI, dbConfig } = config;
+// 用mongoose连接数据库
+const dbCommonOption = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+mongoose
+  .connect(
+    mongoURI,
+    isProduction ? { ...dbCommonOption, ...dbConfig.pro } : { ...dbCommonOption, ...dbConfig.dev }
+  )
+  .then(
+    () => console.log('数据库链接成功'),
+    (err) => {
+      console.error('数据库链接失败:', err);
+    }
+  );
+// 实例化Koa
 const app = new Koa();
+// json error中间件
 app.use(
   jsonError({
-    postFormat: (_e, { stack, ...rest }) => {
-      const common = {
+    postFormat: (_e, { status, message, stack }) => {
+      const result = {
         success: false,
+        status: status || 500,
+        message,
+        stack,
       };
-      return process.env.NODE_ENV === 'production'
-        ? { rest, ...common }
-        : { stack, ...rest, ...common };
+      if (isProduction) {
+        delete result.stack;
+      }
+      return result;
     },
   })
 );
+// 加载静态资源中间件，public目录下的资源可以直接被访问
 app.use(koaStatic(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'icon.png')));
-
+// 加载koabody中间件
 app.use(
   koaBody({
     multipart: true, // 支持文件上传
@@ -40,11 +70,12 @@ app.use(
     },
   })
 );
+// 加载参数校验中间件
 app.use(parameter(app)); // 传入app，可以在ctx中加入方法，全局使用
-
-requireDirectory(module, './mocks/api/v1', {
+// 注册所有的路由
+requireDirectory(module, './api/v1', {
   visit: whenLoadModule,
-  extensions: ['ts', 'js'],
+  extensions: ['ts'],
 });
 
 function whenLoadModule(obj: any) {
@@ -59,5 +90,4 @@ const PORT = 3000;
 app.listen(PORT, '0.0.0.0', () => {
   const url = `http://localhost:${PORT}`;
   console.info(`Listening at ${url}`);
-  // console.log("app:", module.filename, path.dirname(module.filename));
 });
