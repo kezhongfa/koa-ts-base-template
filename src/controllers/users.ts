@@ -1,9 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import jsonwebtoken from 'jsonwebtoken';
 import User from '../models/users';
-import config from '@/config';
+import config from '@/config/jwt';
 
-const { secret } = config;
+const { secret, options } = config;
+const { expiresIn } = options;
 class UsersCtrl {
   async find(ctx: any) {
     ctx.body = await User.find();
@@ -72,7 +73,7 @@ class UsersCtrl {
     }
     const { _id, name } = user as any;
     // expiresIn: '1d' 过期时间1天
-    const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn: '1d' });
+    const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn });
     ctx.body = { token };
   }
 }

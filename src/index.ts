@@ -13,7 +13,7 @@ import Router from 'koa-router';
 import parameter from 'koa-parameter';
 import mongoose from 'mongoose';
 import path from 'path';
-import config from '@/config';
+import config from '@/config/db';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 import jwt from 'koa-jwt';
 import Users from '@/controllers/users';
-import config from '@/config';
+import config from '@/config/jwt';
 
 const { secret } = config;
 const { find, findById, create, update, delete: del, login, checkOwner } = Users;
