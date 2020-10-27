@@ -7,6 +7,24 @@ import config from '@/config/jwt';
 const { secret, options } = config;
 const { expiresIn } = options;
 class UsersCtrl {
+  // 授权，查看是不是自己
+  async checkOwner(ctx: any, next: any) {
+    if (ctx.params.id !== ctx.state.user._id) {
+      ctx['throw'](403, '没有权限');
+    }
+    await next();
+  }
+
+  // 判断用户是否存在
+  async checkUserExist(ctx: any, next: any) {
+    const user = await UserModel.findById(ctx.params.id);
+    if (!user) {
+      ctx['throw'](404, '用户不存在');
+    } else {
+      await next();
+    }
+  }
+
   async find(ctx: any) {
     ctx.body = await UserModel.find();
   }
@@ -42,13 +60,6 @@ class UsersCtrl {
     // const user = await new User(ctx.request.body).save();
     const user = await UserModel.create(ctx.request.body);
     ctx.body = user;
-  }
-
-  async checkOwner(ctx: any, next: any) {
-    if (ctx.params.id !== ctx.state.user._id) {
-      ctx['throw'](403, '没有权限');
-    }
-    await next();
   }
 
   async update(ctx: any) {

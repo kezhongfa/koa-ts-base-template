@@ -12,6 +12,7 @@ const {
   delete: del,
   login,
   checkOwner,
+  checkUserExist,
   listFollowing,
   listFollowers,
   follow,
@@ -30,6 +31,6 @@ router.post('/login', login);
 router.get('/:id/following', listFollowing);
 router.get('/:id/followers', listFollowers);
 
-router.put('/following/:id', auth, follow);
-router['delete']('/following/:id', auth, unfollow);
+router.put('/following/:id', auth, checkUserExist, follow);
+router['delete']('/following/:id', auth, checkUserExist, unfollow);
 export default router;
