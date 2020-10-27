@@ -1,18 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import jsonwebtoken from 'jsonwebtoken';
-import User from '../models/users';
+import UserModel from '../models/users';
 import config from '@/config/jwt';
 
 const { secret, options } = config;
 const { expiresIn } = options;
 class UsersCtrl {
   async find(ctx: any) {
-    ctx.body = await User.find();
+    ctx.body = await UserModel.find();
   }
 
   async findById(ctx: any) {
     // findById 方法实现查找
-    const user = await User.findById(ctx.params.id);
+    const user = await UserModel.findById(ctx.params.id);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
@@ -25,12 +25,13 @@ class UsersCtrl {
       password: { type: 'string', required: true },
     });
     const { name } = ctx.request.body;
-    const repeatedUser = await User.findOne({ name });
+    const repeatedUser = await UserModel.findOne({ name });
     // 409 表示冲突
     if (repeatedUser) {
       ctx['throw'](409, '用户名已被占用');
     }
-    const user = await new User(ctx.request.body).save();
+    // const user = await new User(ctx.request.body).save();
+    const user = await UserModel.create(ctx.request.body);
     ctx.body = user;
   }
 
@@ -46,7 +47,7 @@ class UsersCtrl {
       name: { type: 'string', required: false },
       password: { type: 'string', required: false },
     });
-    const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body);
+    const user = await UserModel.findByIdAndUpdate(ctx.params.id, ctx.request.body);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
@@ -55,7 +56,7 @@ class UsersCtrl {
 
   async delete(ctx: any) {
     // findByIdAndRemove 方法实现删除
-    const user = await User.findByIdAndRemove(ctx.params.id);
+    const user = await UserModel.findByIdAndRemove(ctx.params.id);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
@@ -67,12 +68,11 @@ class UsersCtrl {
       name: { type: 'string', required: true },
       password: { type: 'string', required: true },
     });
-    const user = await User.findOne(ctx.request.body);
+    const user = await UserModel.findOne(ctx.request.body);
     if (!user) {
       ctx['throw'](401, '用户名或密码不正确');
     }
     const { _id, name } = user as any;
-    // expiresIn: '1d' 过期时间1天
     const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn });
     ctx.body = { token };
   }
