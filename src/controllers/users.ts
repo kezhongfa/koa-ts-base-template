@@ -116,6 +116,25 @@ class UsersCtrl {
     }
     ctx.status = 204;
   }
+
+  // 粉丝列表
+  async listFollowers(ctx: any) {
+    const users = await UserModel.find({ following: ctx.params.id });
+    ctx.body = users;
+  }
+
+  // 取消关注
+  async unfollow(ctx: any) {
+    // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
+    const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as any;
+    const index = me.following.map((id: string) => id.toString()).indexOf(ctx.params.id);
+    // 判断关注列表中是否已经存在
+    if (index > -1) {
+      me.following.splice(index, 1);
+      me.save();
+    }
+    ctx.status = 204;
+  }
 }
 
 export default new UsersCtrl();

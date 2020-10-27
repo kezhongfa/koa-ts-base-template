@@ -13,7 +13,9 @@ const {
   login,
   checkOwner,
   listFollowing,
+  listFollowers,
   follow,
+  unfollow,
 } = Users;
 const auth = jwt({ secret });
 
@@ -26,5 +28,8 @@ router.patch('/:id', auth, checkOwner, update);
 router['delete']('/:id', auth, checkOwner, del);
 router.post('/login', login);
 router.get('/:id/following', listFollowing);
+router.get('/:id/followers', listFollowers);
+
 router.put('/following/:id', auth, follow);
+router['delete']('/following/:id', auth, unfollow);
 export default router;
