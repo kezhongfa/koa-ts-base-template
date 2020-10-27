@@ -10,8 +10,8 @@ const userSchema = new Schema({
   avatar_url: { type: String },
   gender: { type: String, enum: ['male', 'female'], default: 'male' },
   headline: { type: String },
-  locations: { type: [{ type: String }] },
-  business: { type: String },
+  locations: { type: [{ type: String }], select: false },
+  business: { type: String, select: false },
   employments: {
     type: [
       {
@@ -19,6 +19,7 @@ const userSchema = new Schema({
         job: { type: String },
       },
     ],
+    select: false,
   },
   educations: {
     type: [
@@ -30,6 +31,7 @@ const userSchema = new Schema({
         graduation_year: { type: Number },
       },
     ],
+    select: false,
   },
 });
 

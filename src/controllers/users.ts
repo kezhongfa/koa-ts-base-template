@@ -11,8 +11,16 @@ class UsersCtrl {
   }
 
   async findById(ctx: any) {
+    const { fields = '' } = ctx.query;
+    const selectFields = fields
+      .split(';')
+      .filter((f: any) => f)
+      .map((f: string) => ` +${ f}`)
+      .join('');
+    // eslint-disable-next-line no-console
+    console.log('selectFields: ', selectFields);
     // findById 方法实现查找
-    const user = await UserModel.findById(ctx.params.id);
+    const user = await UserModel.findById(ctx.params.id).select(selectFields);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
@@ -46,6 +54,13 @@ class UsersCtrl {
     ctx.verifyParams({
       name: { type: 'string', required: false },
       password: { type: 'string', required: false },
+      avatar_url: { type: 'string', required: false },
+      gender: { type: 'string', required: false },
+      headline: { type: 'string', required: false },
+      locations: { type: 'array', itemType: 'string', required: false },
+      business: { type: 'string', required: false },
+      employments: { type: 'array', itemType: 'object', required: false },
+      educations: { type: 'array', itemType: 'object', required: false },
     });
     const user = await UserModel.findByIdAndUpdate(ctx.params.id, ctx.request.body);
     if (!user) {
