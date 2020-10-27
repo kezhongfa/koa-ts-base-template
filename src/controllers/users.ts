@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 /* eslint-disable no-magic-numbers */
 import jsonwebtoken from 'jsonwebtoken';
 import UserModel from '../models/users';
@@ -15,7 +16,7 @@ class UsersCtrl {
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
-      .map((f: string) => ` +${ f}`)
+      .map((f: string) => ` +${f}`)
       .join('');
     // eslint-disable-next-line no-console
     console.log('selectFields: ', selectFields);
@@ -90,6 +91,30 @@ class UsersCtrl {
     const { _id, name } = user as any;
     const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn });
     ctx.body = { token };
+  }
+
+  // 获取关注列表
+  async listFollowing(ctx: any) {
+    const user = (await UserModel.findById(ctx.params.id)
+      .select('+following')
+      .populate('following')) as any;
+    if (!user) {
+      ctx['throw'](404, 'user not exsits');
+    }
+    // eslint-disable-next-line require-atomic-updates
+    ctx.body = user!.following;
+  }
+
+  // 关注某人
+  async follow(ctx: any) {
+    // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
+    const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as any;
+    // 判断关注列表中是否已经存在
+    if (me && !me.following.map((id: string) => id.toString()).includes(ctx.params.id)) {
+      me.following.push(ctx.params.id);
+      me.save();
+    }
+    ctx.status = 204;
   }
 }
 
