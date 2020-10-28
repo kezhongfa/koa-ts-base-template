@@ -30,7 +30,7 @@ class UsersCtrl {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
     const pageSize = Math.max(Number(pagesize), 1);
-    ctx.body = await UserModel.find()
+    ctx.body = await UserModel.find({ name: new RegExp(ctx.query.q) })
       .limit(pageSize)
       .skip(page * pageSize);
   }
