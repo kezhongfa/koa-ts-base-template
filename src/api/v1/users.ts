@@ -1,6 +1,7 @@
 import Router from 'koa-router';
 import jwt from 'koa-jwt';
 import Users from '@/controllers/users';
+import Topics from '@/controllers/topics';
 import config from '@/config/jwt';
 
 const { secret } = config;
@@ -17,7 +18,12 @@ const {
   listFollowers,
   follow,
   unfollow,
+  listFollowingTopics,
+  followTopic,
+  unfollowTopic,
 } = Users;
+
+const { checkTopicExists } = Topics;
 const auth = jwt({ secret });
 
 const router = new Router({ prefix: '/v1/users' });
@@ -33,4 +39,8 @@ router.get('/:id/followers', listFollowers);
 
 router.put('/following/:id', auth, checkUserExist, follow);
 router['delete']('/following/:id', auth, checkUserExist, unfollow);
+
+router.get('/:id/followingTopics', listFollowingTopics);
+router.put('/followingTopics/:id', auth, checkTopicExists, followTopic);
+router['delete']('/followingTopics/:id', auth, checkTopicExists, unfollowTopic);
 export default router;

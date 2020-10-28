@@ -38,6 +38,10 @@ export const userSchema = createSchema({
     type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     select: false,
   },
+  followingTopics: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
+    select: false,
+  },
 });
 
 export default model('User', userSchema);

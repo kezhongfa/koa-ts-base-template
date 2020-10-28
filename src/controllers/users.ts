@@ -165,6 +165,35 @@ class UsersCtrl {
     }
     ctx.status = 204;
   }
+
+  async listFollowingTopics(ctx: Context) {
+    const user = (await UserModel.findById(ctx.params.id)
+      .select('+followingTopics')
+      .populate('followingTopics')) as any;
+    if (!user) {
+      ctx['throw'](404, 'user not exsits');
+    }
+    ctx.body = user.followingTopics;
+  }
+
+  async followTopic(ctx: Context) {
+    const me = (await UserModel.findById(ctx.state.user._id).select('+followingTopics')) as any;
+    if (!me.followingTopics.map((id: string) => id.toString()).includes(ctx.params.id)) {
+      me.followingTopics.push(ctx.params.id);
+      me.save();
+    }
+    ctx.status = 204;
+  }
+
+  async unfollowTopic(ctx: Context) {
+    const me = (await UserModel.findById(ctx.state.user._id).select('+followingTopics')) as any;
+    const index = me.followingTopics.map((id: string) => id.toString()).indexOf(ctx.params.id);
+    if (index > -1) {
+      me.followingTopics.splice(index, 1);
+      me.save();
+    }
+    ctx.status = 204;
+  }
 }
 
 export default new UsersCtrl();

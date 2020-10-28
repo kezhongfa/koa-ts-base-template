@@ -1,9 +1,19 @@
+/* eslint-disable no-console */
 /* eslint-disable require-atomic-updates */
 /* eslint-disable no-magic-numbers */
-import { Context } from 'koa';
+import { Context, Next } from 'koa';
 import TopicModel from '../models/topics';
+import UserModel from '../models/users';
 
 class TopicCtrl {
+  async checkTopicExists(ctx: Context, next: Next) {
+    const topic = await TopicModel.findById(ctx.params.id);
+    if (!topic) {
+      ctx['throw'](404, 'topic not exsits');
+    }
+    await next();
+  }
+
   async find(ctx: Context) {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
@@ -20,7 +30,6 @@ class TopicCtrl {
       .filter((f: any) => f)
       .map((f: string) => ` +${f}`)
       .join('');
-    // eslint-disable-next-line no-console
     console.log('selectFields: ', selectFields);
     const topic = await TopicModel.findById(ctx.params.id).select(selectFields);
     ctx.body = topic;
@@ -45,6 +54,11 @@ class TopicCtrl {
     // findByIdAndUpdate 返回的topic 是更新前的
     const topic = await TopicModel.findByIdAndUpdate(ctx.params.id, ctx.request.body);
     ctx.body = topic;
+  }
+
+  async listTopicFollowers(ctx: Context) {
+    const users = await UserModel.find({ followingTopics: ctx.params.id });
+    ctx.body = users;
   }
 }
 
