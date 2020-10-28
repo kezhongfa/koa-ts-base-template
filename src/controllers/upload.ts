@@ -1,14 +1,15 @@
 import path from 'path';
+import { Context } from 'koa';
 
 class UploadCtrl {
-  index(ctx: any) {
+  index(ctx: Context) {
     ctx.body = '上传测试';
   }
 
   // 图片上传接口
-  upload(ctx: any) {
+  upload(ctx: Context) {
     // 获取上传图片对象(koa-body)
-    const { file } = ctx.request.files;
+    const { file } = ctx.request.files!;
     // 获取图片名和后缀名
     const basename = path.basename(file.path);
     ctx.body = {

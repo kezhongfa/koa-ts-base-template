@@ -10,9 +10,9 @@ import jsonError from 'koa-json-error';
 import requireDirectory from 'require-directory';
 import favicon from 'koa-favicon';
 import Router from 'koa-router';
-import verifyParameter from './middleware/verify-paramter';
 import mongoose from 'mongoose';
 import path from 'path';
+import verifyParameter from './middlewares/verify-paramter';
 import config from '@/config/db';
 
 const isProduction = process.env.NODE_ENV === 'production';

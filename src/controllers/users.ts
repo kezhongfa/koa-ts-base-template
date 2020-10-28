@@ -1,6 +1,7 @@
 /* eslint-disable require-atomic-updates */
 /* eslint-disable no-magic-numbers */
 import jsonwebtoken from 'jsonwebtoken';
+import { Context, Next } from 'koa';
 import UserModel from '../models/users';
 import config from '@/config/jwt';
 
@@ -8,7 +9,7 @@ const { secret, options } = config;
 const { expiresIn } = options;
 class UsersCtrl {
   // 授权，查看是不是自己
-  async checkOwner(ctx: any, next: any) {
+  async checkOwner(ctx: Context, next: Next) {
     if (ctx.params.id !== ctx.state.user._id) {
       ctx['throw'](403, '没有权限');
     }
@@ -16,7 +17,7 @@ class UsersCtrl {
   }
 
   // 判断用户是否存在
-  async checkUserExist(ctx: any, next: any) {
+  async checkUserExist(ctx: Context, next: Next) {
     const user = await UserModel.findById(ctx.params.id);
     if (!user) {
       ctx['throw'](404, '用户不存在');
@@ -25,11 +26,11 @@ class UsersCtrl {
     }
   }
 
-  async find(ctx: any) {
+  async find(ctx: Context) {
     ctx.body = await UserModel.find();
   }
 
-  async findById(ctx: any) {
+  async findById(ctx: Context) {
     const { fields = '' } = ctx.query;
     const selectFields = fields
       .split(';')
@@ -46,7 +47,7 @@ class UsersCtrl {
     ctx.body = user;
   }
 
-  async create(ctx: any) {
+  async create(ctx: Context) {
     ctx.verifyParams({
       name: { type: 'string', required: true },
       password: { type: 'string', required: true },
@@ -62,7 +63,7 @@ class UsersCtrl {
     ctx.body = user;
   }
 
-  async update(ctx: any) {
+  async update(ctx: Context) {
     ctx.verifyParams({
       name: { type: 'string', required: false },
       password: { type: 'string', required: false },
@@ -81,7 +82,7 @@ class UsersCtrl {
     ctx.body = user;
   }
 
-  async delete(ctx: any) {
+  async delete(ctx: Context) {
     // findByIdAndRemove 方法实现删除
     const user = await UserModel.findByIdAndRemove(ctx.params.id);
     if (!user) {
@@ -90,22 +91,22 @@ class UsersCtrl {
     ctx.status = 204;
   }
 
-  async login(ctx: any) {
+  async login(ctx: Context) {
     ctx.verifyParams({
       name: { type: 'string', required: true },
       password: { type: 'string', required: true },
     });
-    const user = await UserModel.findOne(ctx.request.body);
+    const user = (await UserModel.findOne(ctx.request.body)) as any;
     if (!user) {
       ctx['throw'](401, '用户名或密码不正确');
     }
-    const { _id, name } = user as any;
+    const { _id, name } = user!;
     const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn });
     ctx.body = { token };
   }
 
   // 获取关注列表
-  async listFollowing(ctx: any) {
+  async listFollowing(ctx: Context) {
     const user = (await UserModel.findById(ctx.params.id)
       .select('+following')
       .populate('following')) as any;
@@ -117,7 +118,7 @@ class UsersCtrl {
   }
 
   // 关注某人
-  async follow(ctx: any) {
+  async follow(ctx: Context) {
     // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
     const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as any;
     // 判断关注列表中是否已经存在
@@ -129,13 +130,13 @@ class UsersCtrl {
   }
 
   // 粉丝列表
-  async listFollowers(ctx: any) {
+  async listFollowers(ctx: Context) {
     const users = await UserModel.find({ following: ctx.params.id });
     ctx.body = users;
   }
 
   // 取消关注
-  async unfollow(ctx: any) {
+  async unfollow(ctx: Context) {
     // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
     const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as any;
     const index = me.following.map((id: string) => id.toString()).indexOf(ctx.params.id);

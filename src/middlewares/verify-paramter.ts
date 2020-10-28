@@ -1,9 +1,9 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable no-param-reassign */
-import Koa from 'koa';
-import Parameter from 'parameter';
+import Application, { Context, Next } from 'koa';
+import Parameter, { ParameterRules, ParameterTranslateFunction } from 'parameter';
 
-export default function (app: Koa, translate?: any) {
+export default function (app: Application, translate?: ParameterTranslateFunction) {
   let parameter: Parameter;
 
   if (typeof translate === 'function') {
@@ -14,7 +14,7 @@ export default function (app: Koa, translate?: any) {
     parameter = new Parameter();
   }
 
-  app.context.verifyParams = function (rules: Parameter.ParameterRules, params: unknown) {
+  app.context.verifyParams = function (rules: ParameterRules, params: unknown) {
     if (!rules) {
       return;
     }
@@ -38,7 +38,7 @@ export default function (app: Koa, translate?: any) {
     });
   };
 
-  return async function verifyParam(ctx: any, next: any) {
+  return async function verifyParam(ctx: Context, next: Next) {
     try {
       await next();
     } catch (err) {
