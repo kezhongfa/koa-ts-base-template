@@ -27,7 +27,12 @@ class UsersCtrl {
   }
 
   async find(ctx: Context) {
-    ctx.body = await UserModel.find();
+    const { pagesize = 10 } = ctx.query;
+    const page = Math.max(Number(ctx.query.page), 1) - 1;
+    const pageSize = Math.max(Number(pagesize), 1);
+    ctx.body = await UserModel.find()
+      .limit(pageSize)
+      .skip(page * pageSize);
   }
 
   async findById(ctx: Context) {
