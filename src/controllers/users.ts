@@ -44,8 +44,21 @@ class UsersCtrl {
       .join('');
     // eslint-disable-next-line no-console
     console.log('selectFields: ', selectFields);
+    const populateStr = fields
+      .split(';')
+      .filter((f: any) => f)
+      .map((f: string) => {
+        if (f === 'employments') {
+          return 'employments.company employments.job';
+        }
+        if (f === 'education') {
+          return 'education.school education.major';
+        }
+        return f;
+      })
+      .join(' ');
     // findById 方法实现查找
-    const user = await UserModel.findById(ctx.params.id).select(selectFields);
+    const user = await UserModel.findById(ctx.params.id).select(selectFields).populate(populateStr);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
