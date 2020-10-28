@@ -10,7 +10,7 @@ import jsonError from 'koa-json-error';
 import requireDirectory from 'require-directory';
 import favicon from 'koa-favicon';
 import Router from 'koa-router';
-import parameter from 'koa-parameter';
+import verifyParameter from './middleware/verify-paramter';
 import mongoose from 'mongoose';
 import path from 'path';
 import config from '@/config/db';
@@ -71,7 +71,7 @@ app.use(
   })
 );
 // 加载参数校验中间件
-app.use(parameter(app)); // 传入app，可以在ctx中加入方法，全局使用
+app.use(verifyParameter(app)); // 传入app，可以在ctx中加入方法，全局使用
 // 注册所有的路由
 requireDirectory(module, './api/v1', {
   visit: whenLoadModule,

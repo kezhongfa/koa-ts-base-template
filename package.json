@@ -55,6 +55,7 @@
     "@types/koa-static": "^4.0.1",
     "@types/mongoose": "^5.7.36",
     "@types/node": "^14.11.7",
+    "@types/parameter": "^3.6.0",
     "@types/require-directory": "^2.1.1",
     "colors": "^1.4.0",
     "commitlint-config-fa": "^1.0.5",
@@ -82,10 +83,10 @@
     "koa-favicon": "^2.1.0",
     "koa-json-error": "^3.1.2",
     "koa-jwt": "^4.0.0",
-    "koa-parameter": "^3.0.1",
     "koa-router": "^9.4.0",
     "koa-static": "^5.0.0",
     "mongoose": "^5.10.9",
+    "parameter": "^3.6.0",
     "require-directory": "^2.1.1"
   }
 }
