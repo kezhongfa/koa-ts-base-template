@@ -33,7 +33,7 @@ class UsersCtrl {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
     const pageSize = Math.max(Number(pagesize), 1);
-    const data = await UserModel.find({ name: new RegExp(ctx.query.q) })
+    const data = await UserModel.find({ name: new RegExp(ctx.query.q, 'i') })
       .limit(pageSize)
       .skip(page * pageSize);
     ctx.body = {
@@ -57,8 +57,8 @@ class UsersCtrl {
         if (f === 'employments') {
           return 'employments.company employments.job';
         }
-        if (f === 'education') {
-          return 'education.school education.major';
+        if (f === 'educations') {
+          return 'educations.school educations.major';
         }
         return f;
       })

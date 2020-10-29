@@ -18,7 +18,7 @@ class TopicCtrl {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
     const pageSize = Math.max(Number(pagesize), 1);
-    ctx.body = await TopicModel.find({ name: new RegExp(ctx.query.q) })
+    ctx.body = await TopicModel.find({ name: new RegExp(ctx.query.q, 'i') })
       .limit(pageSize)
       .skip(page * pageSize);
   }

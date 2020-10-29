@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
