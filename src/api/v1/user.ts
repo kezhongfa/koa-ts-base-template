@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 import jwt from 'koa-jwt';
-import Users from '@/controllers/users';
-import Topics from '@/controllers/topics';
+import UserCtrl from '@/controller/user';
+import TopicCtrl from '@/controller/topic';
 import config from '@/config/jwt';
 
 const { secret } = config;
@@ -21,9 +21,9 @@ const {
   listFollowingTopics,
   followTopic,
   unfollowTopic,
-} = Users;
+} = UserCtrl;
 
-const { checkTopicExists } = Topics;
+const { checkTopicExists } = TopicCtrl;
 const auth = jwt({ secret });
 
 const router = new Router({ prefix: '/v1/users' });

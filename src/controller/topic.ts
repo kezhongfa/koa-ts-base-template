@@ -2,8 +2,8 @@
 /* eslint-disable require-atomic-updates */
 /* eslint-disable no-magic-numbers */
 import { Context, Next } from 'koa';
-import TopicModel from '../models/topics';
-import UserModel from '../models/users';
+import TopicModel from '@/model/topic';
+import UserModel from '@/model/user';
 
 class TopicCtrl {
   async checkTopicExists(ctx: Context, next: Next) {

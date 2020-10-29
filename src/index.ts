@@ -12,7 +12,7 @@ import favicon from 'koa-favicon';
 import Router from 'koa-router';
 import mongoose from 'mongoose';
 import path from 'path';
-import verifyParameter from './middlewares/verify-paramter';
+import verifyParameter from './middleware/verify-paramter';
 import config from '@/config/db';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -42,8 +42,9 @@ app.use(
   jsonError({
     postFormat: (_e, { status, message, stack }) => {
       const result = {
-        success: false,
         status: status || 500,
+        success: false,
+        data: null,
         message,
         stack,
       };

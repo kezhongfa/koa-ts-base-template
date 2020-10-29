@@ -1,10 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import mongoose from 'mongoose';
-import { createSchema } from '@/utils/mongoose';
+import { IUserDocument } from './type';
 
 const { Schema, model } = mongoose;
 
-export const userSchema = createSchema({
+export const userSchema = new Schema({
   __v: { type: Number, select: false }, // 隐藏无用返回
   name: { type: String, required: true },
   password: { type: String, required: true, select: false }, // 默认不暴露密码
@@ -44,4 +44,4 @@ export const userSchema = createSchema({
   },
 });
 
-export default model('User', userSchema);
+export default model<IUserDocument>('User', userSchema);

@@ -1,10 +1,10 @@
 import Router from 'koa-router';
 import jwt from 'koa-jwt';
 
-import Topics from '@/controllers/topics';
+import Topic from '@/controller/topic';
 import config from '@/config/jwt';
 
-const { find, create, findById, update, checkTopicExists, listTopicFollowers } = Topics;
+const { find, create, findById, update, checkTopicExists, listTopicFollowers } = Topic;
 const { secret } = config;
 const router = new Router({ prefix: '/v1/topics' });
 

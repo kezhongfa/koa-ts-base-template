@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import UploadCtrl from '@/controllers/upload';
+import UploadCtrl from '@/controller/upload';
 
 const { index, upload } = UploadCtrl;
 

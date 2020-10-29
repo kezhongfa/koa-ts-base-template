@@ -21,5 +21,6 @@ export interface IUserDocument extends Document {
   business?: string;
   employments?: IEmployment[];
   educations?: IEducation[];
-  following?: Schema.Types.ObjectId;
+  following: Schema.Types.ObjectId[];
+  followingTopics: Schema.Types.ObjectId[];
 }
