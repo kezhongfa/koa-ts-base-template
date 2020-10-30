@@ -79,7 +79,7 @@ requireDirectory(module, './api/v1', {
   extensions: ['ts'],
 });
 
-function whenLoadModule(obj: any) {
+function whenLoadModule(obj: NodeModule) {
   const routerInstance = obj['default'];
   if (routerInstance instanceof Router) {
     app.use(routerInstance.routes());
