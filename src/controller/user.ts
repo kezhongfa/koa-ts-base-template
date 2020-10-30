@@ -5,6 +5,7 @@
 import jsonwebtoken from 'jsonwebtoken';
 import { Context, Next } from 'koa';
 import UserModel from '@/model/user';
+import Question from '@/model/question';
 import config from '@/config/jwt';
 import { IUserDocument } from '@/model/user/type';
 
@@ -222,6 +223,11 @@ class UsersCtrl {
       me.save();
     }
     ctx.status = 204;
+  }
+
+  async listQuestions(ctx: Context) {
+    const questions = await Question.find({ questioner: ctx.params.id });
+    ctx.body = questions;
   }
 }
 

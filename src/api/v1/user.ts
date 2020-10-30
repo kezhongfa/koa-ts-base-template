@@ -21,6 +21,7 @@ const {
   listFollowingTopics,
   followTopic,
   unfollowTopic,
+  listQuestions,
 } = UserCtrl;
 
 const { checkTopicExists } = TopicCtrl;
@@ -43,4 +44,6 @@ router['delete']('/following/:id', auth, checkUserExist, unfollow);
 router.get('/:id/followingTopics', listFollowingTopics);
 router.put('/followingTopics/:id', auth, checkTopicExists, followTopic);
 router['delete']('/followingTopics/:id', auth, checkTopicExists, unfollowTopic);
+
+router.get('/:id/questions', listQuestions);
 export default router;
