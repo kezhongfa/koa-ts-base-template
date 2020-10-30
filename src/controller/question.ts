@@ -28,11 +28,11 @@ class QuestionCtrl {
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
-      .map((f: string) => ` +${ f}`)
+      .map((f: string) => ` +${f}`)
       .join('');
     const question = await QuestionModel.findById(ctx.params.id)
       .select(selectFields)
-      .populate('questioner');
+      .populate('questioner topics');
     ctx.body = question;
   }
 
@@ -58,11 +58,11 @@ class QuestionCtrl {
 
   async update(ctx: Context) {
     ctx.verifyParams({
-      title: { type: 'string', required: true },
+      title: { type: 'string', required: false },
       description: { type: 'string', required: false },
+      topics: { type: 'array', itemType: 'string', required: false },
     });
-    // findByIdAndUpdate 返回的 question 是更新前的
-    await ctx.state.question.update(ctx.request.body);
+    await ctx.state.question.updateOne(ctx.request.body);
     ctx.body = ctx.state.question;
   }
 

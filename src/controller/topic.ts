@@ -4,6 +4,7 @@
 import { Context, Next } from 'koa';
 import TopicModel from '@/model/topic';
 import UserModel from '@/model/user';
+import QuestionModel from '@/model/question';
 
 class TopicCtrl {
   async checkTopicExists(ctx: Context, next: Next) {
@@ -59,6 +60,11 @@ class TopicCtrl {
   async listTopicFollowers(ctx: Context) {
     const users = await UserModel.find({ followingTopics: ctx.params.id });
     ctx.body = users;
+  }
+
+  async listQuestions(ctx: Context) {
+    const questions = await QuestionModel.find({ topics: ctx.params.id });
+    ctx.body = questions;
   }
 }
 
