@@ -25,4 +25,5 @@ export interface IUserDocument extends Document {
   followingTopics: Schema.Types.ObjectId[];
   likingAnswers: Schema.Types.ObjectId[];
   dislikingAnswers: Schema.Types.ObjectId[];
+  collectingAnswers: Schema.Types.ObjectId[];
 }

@@ -300,6 +300,40 @@ class UsersCtrl {
     }
     ctx.status = 204;
   }
+
+  async listCollectingAnswers(ctx: Context) {
+    const user = (await UserModel.findById(ctx.params.id)
+      .select('+collectingAnswers')
+      .populate('collectingAnswers')) as IUserDocument;
+    if (!user) {
+      ctx['throw'](404, 'user not exsits');
+    }
+    ctx.body = user.collectingAnswers;
+  }
+
+  async collectAnswer(ctx: Context, next: Next) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+collectingAnswers'
+    )) as IUserDocument;
+    if (!me.collectingAnswers.map((id) => id.toString()).includes(ctx.params.id)) {
+      me.collectingAnswers.push(ctx.params.id);
+      me.save();
+    }
+    ctx.status = 204;
+    await next();
+  }
+
+  async unCollectAnswer(ctx: Context) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+collectingAnswers'
+    )) as IUserDocument;
+    const index = me.collectingAnswers.map((id) => id.toString()).indexOf(ctx.params.id);
+    if (index > -1) {
+      me.collectingAnswers.splice(index, 1);
+      me.save();
+    }
+    ctx.status = 204;
+  }
 }
 
 export default new UsersCtrl();

@@ -29,6 +29,9 @@ const {
   unlikeAnswer,
   listDislikingAnswers,
   dislikeAnswer,
+  listCollectingAnswers,
+  collectAnswer,
+  unCollectAnswer,
 } = UserCtrl;
 
 const { checkTopicExists } = TopicCtrl;
@@ -65,5 +68,11 @@ router['delete']('/:id/likingAnswers/:id', auth, checkAnswerExists, unlikeAnswer
 // 踩答案
 router.get('/:id/dislikingAnswers', listDislikingAnswers);
 router.put('/dislikingAnswers/:id', auth, checkAnswerExists, dislikeAnswer, unlikeAnswer);
-router['delete']('/:id/dislikingAnswers/:id', auth, checkAnswerExists, unDislikeAnswer);
+router['delete']('/dislikingAnswers/:id', auth, checkAnswerExists, unDislikeAnswer);
+
+// 答案收藏
+router.get('/:id/collectingAnswers', listCollectingAnswers);
+router.put('/collectingAnswers/:id', auth, checkAnswerExists, collectAnswer);
+router['delete']('/collectingAnswers/:id', auth, checkAnswerExists, unCollectAnswer);
+
 export default router;
