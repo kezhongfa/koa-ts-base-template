@@ -42,6 +42,14 @@ export const userSchema = new Schema({
     type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
     select: false,
   },
+  likingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
+    select: false,
+  },
+  dislikingAnswers: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
+    select: false,
+  },
 });
 
 export default model<IUserDocument>('User', userSchema);

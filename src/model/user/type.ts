@@ -23,4 +23,6 @@ export interface IUserDocument extends Document {
   educations?: IEducation[];
   following: Schema.Types.ObjectId[];
   followingTopics: Schema.Types.ObjectId[];
+  likingAnswers: Schema.Types.ObjectId[];
+  dislikingAnswers: Schema.Types.ObjectId[];
 }

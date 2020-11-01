@@ -2,6 +2,7 @@ import Router from 'koa-router';
 import jwt from 'koa-jwt';
 import UserCtrl from '@/controller/user';
 import TopicCtrl from '@/controller/topic';
+import AnswerCtrl from '@/controller/answer';
 import config from '@/config/jwt';
 
 const { secret } = config;
@@ -22,9 +23,18 @@ const {
   followTopic,
   unfollowTopic,
   listQuestions,
+  listLikingAnswers,
+  likeAnswer,
+  unDislikeAnswer,
+  unlikeAnswer,
+  listDislikingAnswers,
+  dislikeAnswer,
 } = UserCtrl;
 
 const { checkTopicExists } = TopicCtrl;
+
+const { checkAnswerExists } = AnswerCtrl;
+
 const auth = jwt({ secret });
 
 const router = new Router({ prefix: '/v1/users' });
@@ -46,4 +56,14 @@ router.put('/followingTopics/:id', auth, checkTopicExists, followTopic);
 router['delete']('/followingTopics/:id', auth, checkTopicExists, unfollowTopic);
 
 router.get('/:id/questions', listQuestions);
+
+// 赞答案
+router.get('/:id/likingAnswers', listLikingAnswers);
+router.put('/likingAnswers/:id', auth, checkAnswerExists, likeAnswer, unDislikeAnswer);
+router['delete']('/:id/likingAnswers/:id', auth, checkAnswerExists, unlikeAnswer);
+
+// 踩答案
+router.get('/:id/dislikingAnswers', listDislikingAnswers);
+router.put('/dislikingAnswers/:id', auth, checkAnswerExists, dislikeAnswer, unlikeAnswer);
+router['delete']('/:id/dislikingAnswers/:id', auth, checkAnswerExists, unDislikeAnswer);
 export default router;

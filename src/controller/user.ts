@@ -5,7 +5,8 @@
 import jsonwebtoken from 'jsonwebtoken';
 import { Context, Next } from 'koa';
 import UserModel from '@/model/user';
-import Question from '@/model/question';
+import QuestionModel from '@/model/question';
+import AnswerModel from '@/model/answer';
 import config from '@/config/jwt';
 import { IUserDocument } from '@/model/user/type';
 
@@ -226,8 +227,78 @@ class UsersCtrl {
   }
 
   async listQuestions(ctx: Context) {
-    const questions = await Question.find({ questioner: ctx.params.id });
+    const questions = await QuestionModel.find({ questioner: ctx.params.id });
     ctx.body = questions;
+  }
+
+  async listLikingAnswers(ctx: Context) {
+    const user = (await UserModel.findById(ctx.params.id)
+      .select('+likingAnswers')
+      .populate('likingAnswers')) as IUserDocument;
+    if (!user) {
+      ctx['throw'](404, 'user not exsits');
+    }
+    ctx.body = user.likingAnswers;
+  }
+
+  async likeAnswer(ctx: Context, next: Next) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+likingAnswers'
+    )) as IUserDocument;
+    if (!me.likingAnswers.map((id) => id.toString()).includes(ctx.params.id)) {
+      me.likingAnswers.push(ctx.params.id);
+      me.save();
+      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } });
+    }
+    ctx.status = 204;
+    await next();
+  }
+
+  async unlikeAnswer(ctx: Context) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+likingAnswers'
+    )) as IUserDocument;
+    const index = me.likingAnswers.map((id) => id.toString()).indexOf(ctx.params.id);
+    if (index > -1) {
+      me.likingAnswers.splice(index, 1);
+      me.save();
+      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: -1 } });
+    }
+    ctx.status = 204;
+  }
+
+  async listDislikingAnswers(ctx: Context) {
+    const user = (await UserModel.findById(ctx.params.id)
+      .select('+dislikingAnswers')
+      .populate('dislikingAnswers')) as IUserDocument;
+    if (!user) {
+      ctx['throw'](404, 'user not exsits');
+    }
+    ctx.body = user.dislikingAnswers;
+  }
+
+  async dislikeAnswer(ctx: Context, next: Next) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+dislikingAnswers'
+    )) as IUserDocument;
+    if (!me.dislikingAnswers.map((id) => id.toString()).includes(ctx.params.id)) {
+      me.dislikingAnswers.push(ctx.params.id);
+      me.save();
+    }
+    ctx.status = 204;
+    await next();
+  }
+
+  async unDislikeAnswer(ctx: Context) {
+    const me = (await UserModel.findById(ctx.state.user._id).select(
+      '+dislikingAnswers'
+    )) as IUserDocument;
+    const index = me.dislikingAnswers.map((id) => id.toString()).indexOf(ctx.params.id);
+    if (index > -1) {
+      me.dislikingAnswers.splice(index, 1);
+      me.save();
+    }
+    ctx.status = 204;
   }
 }
 

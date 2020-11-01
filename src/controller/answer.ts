@@ -20,7 +20,8 @@ class AnswerCtrl {
     if (!answer) {
       ctx['throw'](404, 'answer not exsits');
     }
-    if (answer.questionId !== ctx.params.questionId) {
+    // 赞和踩答案不检查
+    if (ctx.params.questionId && answer.questionId !== ctx.params.questionId) {
       ctx['throw'](404, '该问题下没有此答案');
     }
     ctx.state.answer = answer;
@@ -32,7 +33,7 @@ class AnswerCtrl {
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
-      .map((f: string) => ` +${ f}`)
+      .map((f: string) => ` +${f}`)
       .join('');
     const answer = await AnswerModel.findById(ctx.params.id)
       .select(selectFields)
