@@ -10,10 +10,11 @@ class CommentController {
     const pageSize = Math.max(Number(pagesize), 1);
     const q = new RegExp(ctx.query.q, 'i');
     const { questionId, answerId } = ctx.params;
-    ctx.body = await CommentModel.find({ content: q, questionId, answerId })
+    const { rootCommentId } = ctx.query;
+    ctx.body = await CommentModel.find({ content: q, questionId, answerId, rootCommentId })
       .limit(pageSize)
       .skip(page * pageSize)
-      .populate('commentator');
+      .populate('commentator replyTo');
   }
 
   async checkCommentExists(ctx: Context, next: Next) {
@@ -37,7 +38,7 @@ class CommentController {
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
-      .map((f: string) => ` +${ f}`)
+      .map((f: string) => ` +${f}`)
       .join('');
     const comment = await CommentModel.findById(ctx.params.id)
       .select(selectFields)
@@ -48,6 +49,8 @@ class CommentController {
   async create(ctx: Context) {
     ctx.verifyParams({
       content: { type: 'string', required: true },
+      rootCommentId: { type: 'string', required: false },
+      replyTo: { type: 'string', required: false },
     });
     const commentator = ctx.state.user._id;
     const { questionId, answerId } = ctx.params;
@@ -72,8 +75,11 @@ class CommentController {
     ctx.verifyParams({
       content: { type: 'string', required: false },
     });
+    // 只允许更新content属性
+    const { content } = ctx.request.body;
+
     // findByIdAndUpdate 返回的 comment 是更新前的
-    await ctx.state.comment.updateOne(ctx.request.body);
+    await ctx.state.comment.updateOne({ content });
     ctx.body = ctx.state.comment;
   }
 
