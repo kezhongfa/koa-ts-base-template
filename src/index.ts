@@ -9,32 +9,25 @@ import koaStatic from 'koa-static';
 import jsonError from 'koa-json-error';
 import requireDirectory from 'require-directory';
 import favicon from 'koa-favicon';
-import Router from 'koa-router';
+import Router from '@koa/router';
 import mongoose from 'mongoose';
 import path from 'path';
 import verifyParameter from './middleware/verify-paramter';
 import config from '@/config/db';
+import envConfig from '@/util/env';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const { isProd } = envConfig;
 
 // 获取mongoose链接地址
 const { mongoURI, dbConfig } = config;
 // 用mongoose连接数据库
-const dbCommonOption = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
-mongoose
-  .connect(
-    mongoURI,
-    isProduction ? { ...dbCommonOption, ...dbConfig.pro } : { ...dbCommonOption, ...dbConfig.dev }
-  )
-  .then(
-    () => console.log('数据库链接成功'),
-    (err) => {
-      console.error('数据库链接失败:', err);
-    }
-  );
+
+mongoose.connect(mongoURI, isProd ? dbConfig.pro : dbConfig.dev).then(
+  () => console.log('数据库链接成功'),
+  (err) => {
+    console.error('数据库链接失败:', err);
+  }
+);
 // 实例化Koa
 const app = new Koa();
 // json error中间件
@@ -48,7 +41,7 @@ app.use(
         message,
         stack,
       };
-      if (isProduction) {
+      if (isProd) {
         delete result.stack;
       }
       return result;
@@ -58,15 +51,15 @@ app.use(
 // 加载静态资源中间件，public目录下的资源可以直接被访问
 app.use(koaStatic(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'icon.png')));
-// 加载koabody中间件
+// 加载koa-body中间件
 app.use(
   koaBody({
-    multipart: true, // 支持文件上传
+    multipart: true, // 支持多文件上传
     formidable: {
       uploadDir: path.join(__dirname, '/public/uploads'), // 设置文件上传目录
       keepExtensions: true, // 保持文件的后缀
       onFileBegin: (name, file) => {
-        console.log(`name: ${name},file:${file}`);
+        console.dir(`onFileBegin-name: ${name},file:${file}`);
       },
     },
   })
@@ -82,7 +75,7 @@ requireDirectory(module, './api/v1', {
 function whenLoadModule(obj: NodeModule) {
   const routerInstance = obj['default'];
   if (routerInstance instanceof Router) {
-    app.use(routerInstance.routes());
+    app.use(routerInstance.routes()).use(routerInstance.allowedMethods());
   }
 }
 

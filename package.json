@@ -47,15 +47,16 @@
   "homepage": "https://github.com/kezhongfa/koa-ts-base-template#readme",
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
+    "@types/crypto-js": "^4.0.1",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/koa": "^2.11.4",
     "@types/koa-favicon": "^2.0.19",
     "@types/koa-json-error": "^3.1.2",
-    "@types/koa-router": "^7.4.1",
     "@types/koa-static": "^4.0.1",
-    "@types/mongoose": "^5.7.36",
+    "@types/koa__router": "^8.0.9",
     "@types/node": "^14.11.7",
     "@types/parameter": "^3.6.0",
+    "@types/redis": "^2.8.28",
     "@types/require-directory": "^2.1.1",
     "colors": "^1.4.0",
     "commitlint-config-fa": "^1.0.5",
@@ -77,16 +78,21 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
+    "@koa/router": "^10.1.1",
+    "crypto-js": "^4.0.0",
+    "immutability-helper": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-favicon": "^2.1.0",
     "koa-json-error": "^3.1.2",
     "koa-jwt": "^4.0.0",
-    "koa-router": "^9.4.0",
+    "koa-redis": "^4.0.1",
     "koa-static": "^5.0.0",
-    "mongoose": "^5.10.9",
+    "mongoose": "^6.0.14",
     "parameter": "^3.6.0",
-    "require-directory": "^2.1.1"
+    "redis": "^3.0.2",
+    "require-directory": "^2.1.1",
+    "xss": "^1.0.8"
   }
 }

@@ -78,7 +78,6 @@ class CommentController {
     // 只允许更新content属性
     const { content } = ctx.request.body;
 
-    // findByIdAndUpdate 返回的 comment 是更新前的
     await ctx.state.comment.updateOne({ content });
     ctx.body = ctx.state.comment;
   }

@@ -1,4 +1,4 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
 import jwt from 'koa-jwt';
 
 import Topic from '@/controller/topic';

@@ -41,7 +41,7 @@ export default function (app: Application, translate?: ParameterTranslateFunctio
   return async function verifyParam(ctx: Context, next: Next) {
     try {
       await next();
-    } catch (err) {
+    } catch (err: any) {
       if (err.code === 'INVALID_PARAM') {
         ctx.status = 422;
         ctx.body = {

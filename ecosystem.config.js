@@ -9,10 +9,13 @@ module.exports = {
       instances: require('os').cpus().length,
       autorestart: true,
       watch: true,
-      ignore_watch: [],
+      ignore_watch: ['public', 'logs'],
       env_production: {
         NODE_ENV: 'production',
       },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss',
     },
   ],
 };

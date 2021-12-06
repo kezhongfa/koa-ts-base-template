@@ -1,4 +1,4 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
 import jwt from 'koa-jwt';
 import UserCtrl from '@/controller/user';
 import TopicCtrl from '@/controller/topic';
@@ -48,6 +48,7 @@ router.get('/:id', findById);
 router.patch('/:id', auth, checkOwner, update);
 router['delete']('/:id', auth, checkOwner, del);
 router.post('/login', login);
+// 获取关注列表
 router.get('/:id/following', listFollowing);
 router.get('/:id/followers', listFollowers);
 

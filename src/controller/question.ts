@@ -19,6 +19,7 @@ class QuestionCtrl {
     if (!question) {
       ctx['throw'](404, 'question not exsits');
     }
+    // 把问题放在state里
     ctx.state.question = question;
     await next();
   }

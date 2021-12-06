@@ -9,6 +9,7 @@ import QuestionModel from '@/model/question';
 import AnswerModel from '@/model/answer';
 import config from '@/config/jwt';
 import { IUserDocument } from '@/model/user/type';
+import { encode } from '@/util/crypto';
 
 const { secret, options } = config;
 const { expiresIn } = options;
@@ -32,12 +33,13 @@ class UsersCtrl {
   }
 
   async find(ctx: Context) {
-    const { pagesize = 10 } = ctx.query;
-    const page = Math.max(Number(ctx.query.page), 1) - 1;
-    const pageSize = Math.max(Number(pagesize), 1);
+    const { pagesize = 10, page = 1 } = ctx.query;
+    const _page = Math.max(Number(page), 1) - 1;
+    const _pageSize = Math.max(Number(pagesize), 1);
+
     const data = await UserModel.find({ name: new RegExp(ctx.query.q, 'i') })
-      .limit(pageSize)
-      .skip(page * pageSize);
+      .limit(_pageSize)
+      .skip(_page * _pageSize);
     ctx.body = {
       success: true,
       data,
@@ -49,9 +51,8 @@ class UsersCtrl {
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
-      .map((f: string) => ` +${f}`)
+      .map((f: string) => ` ${f}`)
       .join('');
-    console.log('selectFields: ', selectFields);
     const populateStr = fields
       .split(';')
       .filter((f: any) => f)
@@ -65,7 +66,10 @@ class UsersCtrl {
         return f;
       })
       .join(' ');
+
+    console.log('selectFields:', fields, selectFields, populateStr);
     const data = await UserModel.findById(ctx.params.id).select(selectFields).populate(populateStr);
+
     if (!data) {
       ctx['throw'](404, '用户不存在');
     }
@@ -86,7 +90,7 @@ class UsersCtrl {
     if (repeatedUser) {
       ctx['throw'](409, '用户名已被占用');
     }
-    // const user = await new User(ctx.request.body).save();
+    // const user = await new UserModel(ctx.request.body).save();
     const data = await UserModel.create(ctx.request.body);
     ctx.body = {
       success: true,
@@ -106,7 +110,8 @@ class UsersCtrl {
       employments: { type: 'array', itemType: 'object', required: false },
       educations: { type: 'array', itemType: 'object', required: false },
     });
-    const data = await UserModel.findByIdAndUpdate(ctx.params.id, ctx.request.body);
+
+    const data = await UserModel.findByIdAndUpdate(ctx.params.id, ctx.request.body, { new: true });
     if (!data) {
       ctx['throw'](404, '用户不存在');
     }
@@ -130,12 +135,17 @@ class UsersCtrl {
       name: { type: 'string', required: true },
       password: { type: 'string', required: true },
     });
-    const user = (await UserModel.findOne(ctx.request.body)) as IUserDocument;
+    const { name, password } = ctx.request.body;
+    const user = (await UserModel.findOne({ name }).select('+password')) as IUserDocument;
     if (!user) {
-      ctx['throw'](401, '用户名或密码不正确');
+      ctx['throw'](401, '账号不存在');
     }
-    const { _id, name } = user!;
-    const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn });
+
+    if (user.password !== encode(password)) {
+      ctx['throw'](500, '密码不正确');
+    }
+    const { _id } = user;
+    const token = jsonwebtoken.sign({ _id, name: user.name }, secret, { expiresIn });
     ctx.body = {
       success: true,
       data: token,
@@ -144,33 +154,35 @@ class UsersCtrl {
 
   // 获取关注列表
   async listFollowing(ctx: Context) {
-    const data = (await UserModel.findById(ctx.params.id)
-      .select('+following')
-      .populate('following')) as IUserDocument;
+    const data = await UserModel.findById(ctx.params.id).select('following').populate('following');
     if (!data) {
       ctx['throw'](404, 'user not exsits');
     }
+
     ctx.body = {
       success: true,
-      data: data.following,
+      data: data!.following,
     };
   }
 
   // 关注某人
   async follow(ctx: Context) {
     // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
-    const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as IUserDocument;
+    const me = await UserModel.findById(ctx.state.user._id).select('+following');
     // 判断关注列表中是否已经存在
-    if (me && !me.following.map((id) => id.toString()).includes(ctx.params.id)) {
-      me.following.push(ctx.params.id);
-      me.save();
+    if (!me?.following.map((id) => id.toString()).includes(ctx.params.id)) {
+      me?.following.push(ctx.params.id);
+      me?.save();
     }
     ctx.status = 204;
   }
 
   // 粉丝列表
   async listFollowers(ctx: Context) {
+    // 语法灵活,虽然following是数组,但是可以直接传id,属于包含关系查询
     const data = await UserModel.find({ following: ctx.params.id });
+    console.log('data1:', data);
+
     ctx.body = {
       success: true,
       data,
@@ -180,12 +192,12 @@ class UsersCtrl {
   // 取消关注
   async unfollow(ctx: Context) {
     // 关注某人一定会有登录态，从state中获取自己用户id,并查询自己关注列表
-    const me = (await UserModel.findById(ctx.state.user._id).select('+following')) as IUserDocument;
-    const index = me.following.map((id) => id.toString()).indexOf(ctx.params.id);
+    const me = await UserModel.findById(ctx.state.user._id).select('+following');
+    const index = me?.following.map((id) => id.toString()).indexOf(ctx.params.id);
     // 判断关注列表中是否已经存在
-    if (index > -1) {
-      me.following.splice(index, 1);
-      me.save();
+    if (index && index > -1) {
+      me?.following.splice(index, 1);
+      me?.save();
     }
     ctx.status = 204;
   }
@@ -248,7 +260,7 @@ class UsersCtrl {
     if (!me.likingAnswers.map((id) => id.toString()).includes(ctx.params.id)) {
       me.likingAnswers.push(ctx.params.id);
       me.save();
-      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } });
+      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } }, { new: true });
     }
     ctx.status = 204;
     await next();
@@ -262,7 +274,11 @@ class UsersCtrl {
     if (index > -1) {
       me.likingAnswers.splice(index, 1);
       me.save();
-      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: -1 } });
+      await AnswerModel.findByIdAndUpdate(
+        ctx.params.id,
+        { $inc: { voteCount: -1 } },
+        { new: true }
+      );
     }
     ctx.status = 204;
   }

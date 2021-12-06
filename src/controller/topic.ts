@@ -52,8 +52,9 @@ class TopicCtrl {
       avatar_url: { type: 'string', required: false },
       introduction: { type: 'string', required: false },
     });
-    // findByIdAndUpdate 返回的topic 是更新前的
-    const topic = await TopicModel.findByIdAndUpdate(ctx.params.id, ctx.request.body);
+    const topic = await TopicModel.findByIdAndUpdate(ctx.params.id, ctx.request.body, {
+      new: true,
+    });
     ctx.body = topic;
   }
 

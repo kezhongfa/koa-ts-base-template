@@ -5,8 +5,6 @@
   "watch": ["src"],
   "exec": "ts-node -r tsconfig-paths/register ./src/index.ts",
   "ext": "ts,js",
-  "ignore": [
-    ".git",
-    "node_modules/**/node_modules"
-  ]
+  "ignore": [],
+  "delay": 2000
 }

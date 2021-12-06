@@ -1,5 +1,6 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable no-magic-numbers */
+import { encode } from '@/util/crypto';
 import mongoose from 'mongoose';
 import { IUserDocument } from './type';
 
@@ -8,8 +9,18 @@ const { Schema, model } = mongoose;
 export const userSchema = new Schema(
   {
     __v: { type: Number, select: false }, // 隐藏无用返回
-    name: { type: String, required: true },
-    password: { type: String, required: true, select: false }, // 默认不暴露密码
+    name: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+      set(v: any) {
+        return encode(v);
+      },
+    }, // 默认不暴露密码
     avatar_url: { type: String },
     gender: { type: String, enum: ['male', 'female'], default: 'male' },
     headline: { type: String },
@@ -59,5 +70,4 @@ export const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
 export default model<IUserDocument>('User', userSchema);
