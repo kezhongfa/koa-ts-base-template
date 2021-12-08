@@ -3,6 +3,8 @@
 import { encode } from '@/util/crypto';
 import mongoose from 'mongoose';
 import { IUserDocument } from './type';
+import deletePlugin from 'mongoose-delete';
+import { IDeleteModel } from '@/interface/mongoose';
 
 const { Schema, model } = mongoose;
 
@@ -70,4 +72,21 @@ export const userSchema = new Schema(
   },
   { timestamps: true }
 );
-export default model<IUserDocument>('User', userSchema);
+
+// userSchema.pre('find', (next) => {
+//   console.log('find-pre');
+//   next();
+// });
+
+// userSchema.post('find', (doc) => {
+//   console.log('find-post:',doc);
+// });
+
+// 插件
+userSchema.plugin(deletePlugin, {
+  overrideMethods: ['find', 'findOne', 'findOneAndUpdate', 'count'],
+  deletedAt: true,
+  deleteBy: true,
+});
+
+export default model<IUserDocument, IDeleteModel<IUserDocument>>('User', userSchema);

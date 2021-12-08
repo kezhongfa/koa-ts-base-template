@@ -36,13 +36,16 @@ class UsersCtrl {
     const { pagesize = 10, page = 1 } = ctx.query;
     const _page = Math.max(Number(page), 1) - 1;
     const _pageSize = Math.max(Number(pagesize), 1);
-
-    const data = await UserModel.find({ name: new RegExp(ctx.query.q, 'i') })
+    const filterCondition = { name: new RegExp(ctx.query.q, 'i') };
+    const totalCount = await UserModel.find(filterCondition).count();
+    const data = await UserModel.find(filterCondition)
       .limit(_pageSize)
       .skip(_page * _pageSize);
+
     ctx.body = {
       success: true,
       data,
+      totalCount,
     };
   }
 
@@ -67,9 +70,9 @@ class UsersCtrl {
       })
       .join(' ');
 
-    console.log('selectFields:', fields, selectFields, populateStr);
     const data = await UserModel.findById(ctx.params.id).select(selectFields).populate(populateStr);
 
+    console.log('selectFields:', fields, selectFields, populateStr);
     if (!data) {
       ctx['throw'](404, '用户不存在');
     }
@@ -122,11 +125,13 @@ class UsersCtrl {
   }
 
   async delete(ctx: Context) {
-    // findByIdAndRemove 方法实现删除
-    const user = await UserModel.findByIdAndRemove(ctx.params.id);
+    const user = await UserModel.findById(ctx.params.id);
     if (!user) {
       ctx['throw'](404, '用户不存在');
     }
+    await UserModel.deleteById(ctx.params.id);
+    // await UserModel['delete']({ gender: 'female' });
+    // await UserModel.restore({ _id: ctx.params.id });
     ctx.status = 204;
   }
 

@@ -6,13 +6,14 @@ import AnswerModel from '@/model/answer';
 
 class AnswerCtrl {
   async find(ctx: Context) {
-    const { pagesize = 10 } = ctx.query;
-    const page = Math.max(Number(ctx.query.page), 1) - 1;
-    const pageSize = Math.max(Number(pagesize), 1);
+    const { pagesize = 10, page = 1 } = ctx.query;
+    const _page = Math.max(Number(page), 1) - 1;
+    const _pageSize = Math.max(Number(pagesize), 1);
+
     const q = new RegExp(ctx.query.q, 'i');
     ctx.body = await AnswerModel.find({ content: q, questionId: ctx.params.questionId })
-      .limit(pageSize)
-      .skip(page * pageSize);
+      .limit(_pageSize)
+      .skip(_page * _pageSize);
   }
 
   async checkAnswerExists(ctx: Context, next: Next) {

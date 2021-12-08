@@ -11,6 +11,7 @@ export interface IEducation {
   entrance_year: number;
   graduation_year: number;
 }
+
 export interface IUserDocument extends Document {
   name: string;
   password: string;
