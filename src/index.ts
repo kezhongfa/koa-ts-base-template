@@ -11,6 +11,7 @@ import requireDirectory from 'require-directory';
 import favicon from 'koa-favicon';
 import Router from '@koa/router';
 import mongoose from 'mongoose';
+import helmet from 'koa-helmet';
 import path from 'path';
 import verifyParameter from './middleware/verify-paramter';
 import config from '@/config/db';
@@ -30,6 +31,8 @@ mongoose.connect(mongoURI, isProd ? dbConfig.pro : dbConfig.dev).then(
 );
 // 实例化Koa
 const app = new Koa();
+console.log('app:', app.env);
+
 // json error中间件
 app.use(
   jsonError({
@@ -48,6 +51,9 @@ app.use(
     },
   })
 );
+// 头盔
+app.use(helmet());
+
 // 加载静态资源中间件，public目录下的资源可以直接被访问
 app.use(koaStatic(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'icon.png')));
