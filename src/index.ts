@@ -12,6 +12,7 @@ import favicon from 'koa-favicon';
 import Router from '@koa/router';
 import mongoose from 'mongoose';
 import helmet from 'koa-helmet';
+import ip from 'koa-ip';
 import path from 'path';
 import verifyParameter from './middleware/verify-paramter';
 import config from '@/config/db';
@@ -51,6 +52,17 @@ app.use(
     },
   })
 );
+
+// IP名单过滤
+app.use(
+  ip({
+    // blacklist: ['127.0.0.*'],
+    handler: async (ctx) => {
+      ctx.status = 403;
+    },
+  })
+);
+
 // 头盔
 app.use(helmet());
 
