@@ -21,9 +21,9 @@ import envConfig from '@/util/env';
 const { isProd } = envConfig;
 
 // 获取mongoose链接地址
-const { mongoURI, dbConfig } = config;
+const { mongoURIConfig, dbConfig } = config;
 // 用mongoose连接数据库
-
+const mongoURI = isProd ? mongoURIConfig.pro : mongoURIConfig.dev;
 mongoose.connect(mongoURI, isProd ? dbConfig.pro : dbConfig.dev).then(
   () => console.log('数据库链接成功'),
   (err) => {
@@ -97,7 +97,7 @@ function whenLoadModule(obj: NodeModule) {
   }
 }
 
-const PORT = 3000;
+const PORT = 4000;
 
 app.listen(PORT, '0.0.0.0', () => {
   const url = `http://localhost:${PORT}`;

@@ -22,7 +22,7 @@
     "start": "npm run before-run-check && node ./bin/start.js",
     "build:ts": "npm run clean && tsc -p tsconfig.build.json",
     "build": "npm run codecheck && npm run build:ts",
-    "pro": "npx pm2 start ecosystem.config.js --env production"
+    "post-build": "npx pm2 start ecosystem.config.js --env production"
   },
   "husky": {
     "hooks": {

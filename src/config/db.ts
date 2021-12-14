@@ -1,5 +1,8 @@
 const config = {
-  mongoURI: 'mongodb://localhost:27017',
+  mongoURIConfig: {
+    dev: 'mongodb://127.0.0.1:27017',
+    pro: 'mongodb://81.68.72.219:27017',
+  },
   dbConfig: {
     dev: {
       dbName: 'kTest',
@@ -8,7 +11,14 @@ const config = {
       autoIndex: false, // 索引建立会导致性能下降
     },
     pro: {
-      dbName: 'kTest',
+      dbName: 'zhihu',
+      auth: {
+        username: 'kzf',
+        password: 'kezhongfa',
+      },
+      authSource: 'zhihu',
+      // user: 'kzf',
+      // pass: 'kezhongfa',
       connectTimeoutMS: 2000,
       bufferCommands: false, // 禁用缓存
       autoIndex: false, // 索引建立会导致性能下降
