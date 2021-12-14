@@ -36,7 +36,7 @@ class UsersCtrl {
     const { pagesize = 10, page = 1 } = ctx.query;
     const _page = Math.max(Number(page), 1) - 1;
     const _pageSize = Math.max(Number(pagesize), 1);
-    const filterCondition = { name: new RegExp(ctx.query.q, 'i') };
+    const filterCondition = { name: new RegExp(ctx.query.q as string, 'i') };
     const totalCount = await UserModel.find(filterCondition).count();
     const data = await UserModel.find(filterCondition)
       .limit(_pageSize)
@@ -50,7 +50,7 @@ class UsersCtrl {
   }
 
   async findById(ctx: Context) {
-    const { fields = '' } = ctx.query;
+    const fields = (ctx.query.fields || '') as string;
     const selectFields = fields
       .split(';')
       .filter((f: any) => f)
@@ -265,7 +265,11 @@ class UsersCtrl {
     if (!me.likingAnswers.map((id) => id.toString()).includes(ctx.params.id)) {
       me.likingAnswers.push(ctx.params.id);
       me.save();
-      await AnswerModel.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } }, { new: true });
+      await AnswerModel.findByIdAndUpdate(
+        ctx.params.id,
+        { $inc: { voteCount: 1 } as any },
+        { new: true }
+      );
     }
     ctx.status = 204;
     await next();
@@ -281,7 +285,7 @@ class UsersCtrl {
       me.save();
       await AnswerModel.findByIdAndUpdate(
         ctx.params.id,
-        { $inc: { voteCount: -1 } },
+        { $inc: { voteCount: -1 } as any },
         { new: true }
       );
     }

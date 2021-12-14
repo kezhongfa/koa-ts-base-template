@@ -19,14 +19,14 @@ class TopicCtrl {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
     const pageSize = Math.max(Number(pagesize), 1);
-    ctx.body = await TopicModel.find({ name: new RegExp(ctx.query.q, 'i') })
+    ctx.body = await TopicModel.find({ name: new RegExp(ctx.query.q as string, 'i') })
       .limit(pageSize)
       .skip(page * pageSize);
   }
 
   async findById(ctx: Context) {
     const { fields = '' } = ctx.query;
-    const selectFields = fields
+    const selectFields = (fields as string)
       .split(';')
       .filter((f: any) => f)
       .map((f: string) => ` +${f}`)

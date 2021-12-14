@@ -9,7 +9,7 @@ class UploadCtrl {
   // 图片上传接口
   upload(ctx: Context) {
     // 获取上传图片对象(koa-body)
-    const { file } = ctx.request.files!;
+    const { file } = ctx.request.files as any;
     // 获取图片名和后缀名
     const basename = path.basename(file.path);
     ctx.body = {

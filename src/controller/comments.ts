@@ -8,7 +8,7 @@ class CommentController {
     const { pagesize = 10 } = ctx.query;
     const page = Math.max(Number(ctx.query.page), 1) - 1;
     const pageSize = Math.max(Number(pagesize), 1);
-    const q = new RegExp(ctx.query.q, 'i');
+    const q = new RegExp(ctx.query.q as string, 'i');
     const { questionId, answerId } = ctx.params;
     const { rootCommentId } = ctx.query;
     ctx.body = await CommentModel.find({ content: q, questionId, answerId, rootCommentId })
@@ -35,7 +35,7 @@ class CommentController {
 
   async findById(ctx: Context) {
     const { fields = '' } = ctx.query;
-    const selectFields = fields
+    const selectFields = (fields as string)
       .split(';')
       .filter((f: any) => f)
       .map((f: string) => ` +${f}`)

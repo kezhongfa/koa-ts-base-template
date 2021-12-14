@@ -10,7 +10,7 @@ class AnswerCtrl {
     const _page = Math.max(Number(page), 1) - 1;
     const _pageSize = Math.max(Number(pagesize), 1);
 
-    const q = new RegExp(ctx.query.q, 'i');
+    const q = new RegExp(ctx.query.q as string, 'i');
     ctx.body = await AnswerModel.find({ content: q, questionId: ctx.params.questionId })
       .limit(_pageSize)
       .skip(_page * _pageSize);
@@ -31,7 +31,7 @@ class AnswerCtrl {
 
   async findById(ctx: Context) {
     const { fields = '' } = ctx.query;
-    const selectFields = fields
+    const selectFields = (fields as string)
       .split(';')
       .filter((f: any) => f)
       .map((f: string) => ` +${f}`)
