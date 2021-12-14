@@ -22,7 +22,7 @@
     "start": "npm run before-run-check && node ./bin/start.js",
     "build:ts": "npm run clean && tsc -p tsconfig.build.json",
     "build": "npm run build:ts",
-    "post-build": "npx pm2 start ecosystem.config.js --env production"
+    "deploy": "npx pm2 start ecosystem.config.js --env production"
   },
   "husky": {
     "hooks": {
@@ -69,7 +69,6 @@
     "lint-staged": "^10.4.0",
     "minimist": "^1.2.5",
     "nodemon": "^2.0.4",
-    "pm2": "^4.5.0",
     "prettier": "^2.1.2",
     "prompts": "^2.3.2",
     "rimraf": "^3.0.2",
